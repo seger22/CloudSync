@@ -1,0 +1,12 @@
+#ifndef LIBRABIN_GLOBAL_H
+#define LIBRABIN_GLOBAL_H
+
+#include <QtCore/qglobal.h>
+
+#if defined(LIBRABIN_LIBRARY)
+#  define LIBRABINSHARED_EXPORT Q_DECL_EXPORT
+#else
+#  define LIBRABINSHARED_EXPORT Q_DECL_IMPORT
+#endif
+
+#endif // LIBRABIN_GLOBAL_H
