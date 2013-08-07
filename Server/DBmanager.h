@@ -20,6 +20,7 @@ class DatabaseManager : public QObject
         bool openDB();
         void closeDB();
         bool isOpen();
+        bool deleteDB();
         QSqlError lastError();
         int insertChunk(u_int64_t hash, int offset, int length, QString path);
         bool getChunk(u_int64_t hash, Chunk &chunk);

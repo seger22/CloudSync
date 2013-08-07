@@ -2,7 +2,7 @@
 
 filehandler::filehandler()
 {
-    watch_dir="/home/satthy/Server";
+    watch_dir="/home/mayuresan/Project/SyncDest";
 }
 
 void filehandler::create_directory(string path, string dir_name)
@@ -30,7 +30,7 @@ void filehandler::move_directory(string old_path, string new_path)
         cout<<"Directory moving success!!"<<endl;
     }
     else
-       ;// cout<<"Directory moving failed"<<endl;
+        cout<<"Directory moving failed"<<endl;
 }
 
 void filehandler::rename_directory(string path, string old_name, string new_name){

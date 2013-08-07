@@ -2,8 +2,8 @@
 #include "ChunkHandler.h"
 #include <hashlibpp.h>
 
-
 DatabaseManager dbmanager;
+
 void debug(const char* msg, ...)
 {
   if( DEBUG )
@@ -151,7 +151,6 @@ chunk_directory(const char *dpath)
         else
             cout<<"couldn't insert. duplicate" <<endl;
       }
- dbmanager.closeDB();
 }
   }
   closedir(dirp);
@@ -163,14 +162,10 @@ void createFile(vector<u_int64_t> hashesFromClient, vector<ChunkDat> chunks,stri
     int matchedChunkSize=0;
     int unmatchedChunkSize=0;
 
-    int totalChunks=hashesFromClient.size();
-    int matchedChunks=0;
-    int unmatchedChunks=0;
-
     if(!dbmanager.isOpen()){
    dbmanager.openDB();
-    cout << "database opened" << endl;}
-string path = "/home/satthy/Server" + filepath;
+    cout << "database opend" << endl;}
+string path = "/home/mayuresan/Project/SyncDest" + filepath;
     FILE * output = fopen (path.c_str(), "w");
 
 bool matched =false;
@@ -179,7 +174,7 @@ Chunk chunk;
         for(int x=0;x<hashesFromClient.size();x++){
             matched = dbmanager.getChunk(hashesFromClient[x],chunk);
             if(matched){
-            //  cout <<chunk.getHash() << "  is matched"<< endl;
+              cout <<chunk.getHash() << "  is matched"<< endl;
 
               FILE* is = fopen(chunk.getPath(), "r");
                   DataSource* ds= new RawFileDataSource(is);
@@ -194,12 +189,9 @@ Chunk chunk;
               }
 matchedChunkSize+=chunk.getLength();
 totalFileSize+=chunk.getLength();
-
-matchedChunks++;
-fclose(is);
             }
             else{
-             //   cout <<hashesFromClient[x] << "  is unmatched"<< endl;
+               // cout <<hashesFromClient[x] << "  is unmatched"<< endl;
                 ChunkDat chnk = chunks[indexofunmatched];
 
                 for(int y=0;y<chnk.chunk_size;y++){
@@ -208,40 +200,36 @@ fclose(is);
               indexofunmatched++;
               unmatchedChunkSize+=chnk.chunk_size;
               totalFileSize+=chnk.chunk_size;
-
-              unmatchedChunks++;
         }
-
   }
         fclose(output);
-        cout << endl;
-         cout << "Number of Matched Chunks   ------- " << matchedChunks  << endl;
-         cout << "Number of Unmatched Chunks ------- " << unmatchedChunks  << endl;
-         cout << "Total File Chunks          ------- " << totalChunks << endl;
-              cout << endl;
+        dbmanager.closeDB();
 
-              cout << "Matched Chunk Size    ----------- " << matchedChunkSize << " Bytes" << endl;
-         cout << "Unmatched Chunk Size  ----------- " << unmatchedChunkSize << " Bytes"<< endl;
-         cout << "Total File Size       ----------- " << totalFileSize  << " Bytes"<< endl;
-          cout << endl;
+        cout << "Total File Size : " << totalFileSize << endl << endl;
+         cout << "Matched Chunk Size : " << matchedChunkSize << endl << endl;
+          cout << "Unmatched Chunk Size : " << unmatchedChunkSize << endl << endl;
 }
 
-vector<int> findMatch(vector<u_int64_t> hashesFromClient){
-
+//vector<int> findMatch(vector<u_int64_t> hashesFromClient){
+vector<bool> findMatch(vector<u_int64_t> hashesFromClient){
     if(!dbmanager.isOpen()){
     dbmanager.openDB();
-    cout << "database opened" << endl;}
-
-    vector<int> unmatched;
+    cout << "database opend" << endl;}
+vector<bool> unmatchdata;
+    //vector<int> unmatched;
     bool matched =false;
     Chunk chunk;
         for(int x=0;x<hashesFromClient.size();x++){
             matched = dbmanager.getChunk(hashesFromClient[x],chunk);
-            if(matched){}
+            if(matched){
+                unmatchdata.push_back(1);
+            }
             else
-                unmatched.push_back(x);
+                //unmatched.push_back(x);
+                unmatchdata.push_back(0);
   }
-    return unmatched;
+      return unmatchdata;
+    //return unmatched;
 }
 
 string fileChecksum(const char *path)
@@ -286,7 +274,6 @@ void DirectoryChecksum(const char *dpath)
         if(done!=-1)
             cout << "Checksum inserted" << endl;
 
-        dbmanager.closeDB();
         }
   }
     closedir(dirp);
@@ -294,18 +281,11 @@ void DirectoryChecksum(const char *dpath)
 
 bool findFileChecksum(string checksum, string &value)
 {
-
     if(!dbmanager.isOpen()){
     dbmanager.openDB();
-    cout << "database opened" << endl;}
+    cout << "database opend" << endl;}
 
     bool matched=dbmanager.findChecksum(checksum.c_str(),value);
+dbmanager.closeDB();
     return matched;
-}
-
-void copyFile(string sourcepath,string destpath){
-
-    std::ifstream  src(sourcepath.c_str());
-        std::ofstream  dst(destpath.c_str());
-        dst << src.rdbuf();
 }

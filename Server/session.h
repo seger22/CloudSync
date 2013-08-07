@@ -14,12 +14,13 @@
 #include <iomanip>
 #include <string>
 #include <sstream>
+#include<iterator>
 #include<fstream>
 #include <vector>
 #include "filehandler.h"
 #include "ChunkHandler.h"
 #include "chunkdat.h"
-#include "boost/thread.hpp"
+#include <boost/thread.hpp>
 
 using boost::asio::ip::tcp;
 using namespace std;
@@ -40,8 +41,14 @@ public:
     void receive_file(string path,string name);
     void read_chunk_data_header(const boost::system::error_code &err);
     void temp_read_chunk_data();
-    vector<int> get_unmatched_hashes(string data);
-    void send_indexes(vector<int> indexes);
+    vector<bool> get_unmatched_hashes(string data);
+    void send_indexes(vector<bool> indexes);
+    template<class T>
+    vector<T> read_vector();
+    template<class T>
+    void send_vector(vector<T> v);
+    void file_modified(string filepath);
+    void file_created(string filepath);
 
 
 private:

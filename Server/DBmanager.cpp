@@ -32,8 +32,7 @@ bool DatabaseManager::openDB()
 void DatabaseManager::closeDB()
 {
     if(db.isOpen())
-        db.close();
-
+    db.close();
 }
 
 bool DatabaseManager::isOpen()
@@ -47,6 +46,24 @@ QSqlError DatabaseManager::lastError()
     // If opening database has failed user can ask
     // error description by QSqlError::text()
     return db.lastError();
+    }
+
+bool DatabaseManager::deleteDB()
+    {
+    // Close database
+    db.close();
+
+    #ifdef Q_OS_LINUX
+    // NOTE: We have to store database file into user home folder in Linux
+    QString path(QDir::home().path());
+    path.append(QDir::separator()).append("my.db.sqlite");
+    path = QDir::toNativeSeparators(path);
+    return QFile::remove(path);
+    #else
+
+    // Remove created database binary file
+    return QFile::remove("my.db.sqlite");
+    #endif
     }
 
 
@@ -65,8 +82,8 @@ int DatabaseManager::insertChunk(u_int64_t hash, int offset, int length, QString
        // .arg(offset).arg(length).arg(path));
 
 QSqlQuery query;
-ret = query.exec(QString("insert into chunk values(%1,%2,%3,'%4')")
-.arg(hash).arg(length).arg(offset).arg(path));
+ret = query.exec(QString("insert into chunk values(%3,'%1','%2',%4)")
+.arg(hash).arg(path).arg(length).arg(offset));
 
 
         // Get database given autoincrement value
@@ -88,11 +105,11 @@ bool DatabaseManager::getChunk(u_int64_t hash, Chunk &chunk)
     QSqlQuery query(QString("select * from chunk where id = %1").arg(hash));
     if (query.next())
         {
-        chunk.setHash(query.value(0).toLongLong());
-        chunk.setOffset(query.value(2).toInt());
-        chunk.setLength(query.value(1).toInt());
+        chunk.setHash(query.value(1).toLongLong());
+        chunk.setOffset(query.value(3).toInt());
+        chunk.setLength(query.value(0).toInt());
 
-        QString str1 = query.value(3).toString();
+        QString str1 = query.value(2).toString();
           QByteArray ba = str1.toLatin1();
           const char *path = ba.data();
         chunk.setPath(path);

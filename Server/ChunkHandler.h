@@ -9,6 +9,7 @@
 #include "rabinpoly.h"
 #include <dirent.h>
 #include <sys/stat.h>
+#include<bitset>
 
 #include <string>
 #include <sstream>
@@ -196,9 +197,9 @@ vector<Chunk*> chunk_file(const char *path);
 void
 chunk_directory(const char *dpath);
 void createFile(vector<u_int64_t> t, vector<ChunkDat> chunks, string filepath);
-vector<int> findMatch(vector<u_int64_t> hashesFromClient);
+vector<bool> findMatch(vector<u_int64_t> hashesFromClient);
 void DirectoryChecksum(const char *dpath);
 bool findFileChecksum(string checksum, string &value);
-void copyFile(string sourcepath,string destpath);
+
 
 #endif //CHUNKHANDLER_H
