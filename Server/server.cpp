@@ -4,7 +4,8 @@
 server::server(boost::asio::io_service &io_service, short port): io_service_(io_service), acceptor_(io_service, tcp::endpoint(tcp::v4(), port))
 {
     cout << "------Server Started!----------" << endl;
-
+    //chunk_directory("/home/mayuresan/Project/SourceTemp");
+    DirectoryChecksum("/home/mayuresan/Project/SourceTemp");
     session* new_session = new session(io_service_);
     boost::thread t(boost::bind(&boost::asio::io_service::run,&io_service_));
     acceptor_.async_accept(new_session->socket(),

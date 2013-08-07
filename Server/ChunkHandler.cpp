@@ -133,7 +133,7 @@ chunk_directory(const char *dpath)
     if (S_ISDIR(sb.st_mode))
       chunk_directory(path);
     else if (S_ISREG(sb.st_mode) && !S_ISLNK(sb.st_mode)){
-//fprintf(stderr, "\n\n------------------------------new file starts    %s -------------------------------------\n\n",path);
+fprintf(stderr, "\n\n------------------------------new file starts    %s -------------------------------------\n\n",path);
       vector<Chunk*> chunk = chunk_file(path);
 
       if(!dbmanager.isOpen()){

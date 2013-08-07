@@ -235,7 +235,6 @@ void session::read_chunk_hashes(string filepath)
     this->read_chunk_data(err,filepath);
     cout<<"Unmatched chunk data recieved successfully!"<<endl << endl;
 
-
 }
 
 template<class T>
