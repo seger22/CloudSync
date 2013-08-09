@@ -19,6 +19,7 @@
 #include <vector>
 #include "filehandler.h"
 #include "ChunkHandler.h"
+#include "blockChecksumSerial.h"
 #include "chunkdat.h"
 #include <boost/thread.hpp>
 

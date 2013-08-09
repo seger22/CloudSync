@@ -111,59 +111,27 @@ void session::read_request(const boost::system::error_code &error){
 }
 
 
-/*
- *void session::filemodified(){
- *read_chunk_hashes
- *match_chunks
- *send_match_result
- *read_unmatched_chunks_block_hash
- *read_block_match_result
- *read_block_data
- *}
- *
- *void session::filecreated(){
- *read_chunk_hashes
- *match_chunks
- *send_chunk_match_result
- *read_chunk_data
- *}
- *
- */
-
 void session::file_modified(string filepath){
     chunk_hashes=read_vector<u_int64_t>();
     if(chunk_hashes.size()==0) return;
     vector<bool> unmatchedHashIndex = findMatch(chunk_hashes);
     cout<<"Sending unmatched hash indexes\n";
     send_vector<bool>(unmatchedHashIndex);
-    cout<<"Sending block hashes\n";
-    vector< vector<u_int32_t> > weak_checksums;
-    //vector< vector<u_int64_t> > strong_checksums;
-    weak_checksums=read_vector< vector<u_int32_t> >();
-    //strong_checksums = read_vector< vector<u_int64_t> >();
-    for(int i=0;i<weak_checksums.size();i++)  {
-        vector<u_int32_t> chunk=weak_checksums[i];
-        for(int j=0;j<chunk.size();j++){
-            cout<<chunk[j]<<endl;
-        }
+    cout<<"Receiving block hashes\n";
+    vector< vector <BlockChecksumSerial> > block_checksums=read_vector<vector < BlockChecksumSerial> > ();
+    cout<<"Got chunks:"<<block_checksums.size()<<endl;
+    for(int i=0;i<block_checksums.size();i++){
+        vector<BlockChecksumSerial> chunk_block_checksum=block_checksums[i];
+        cout<<"Got blocks : "<<chunk_block_checksum.size()<<" in chunk: "<<i<<endl;
+        for(int j=0;j<chunk_block_checksum.size();j++)
+            cout<<chunk_block_checksum[j].getWeeksum()<<endl;
     }
-  //  this->send_indexes(unmatchedHashIndex);
+
 boost::system::error_code err;
     cout<<"Recieving unmatched chunk data..."<<endl;
-    this->read_chunk_data(err,filepath);
+    //this->read_chunk_data(err,filepath);
     cout<<"Unmatched chunk data recieved successfully!"<<endl << endl;
 
-//    vector < vector<bool> > unmatchedblockindex=findBlockMatch(weak_checksums,strong_checksums,filepath);
-//    for(int i=0 ;i<unmatchedblockindex.size();i++){
-//        vector<bool> chunk_blocks=unmatchedblockindex[i];
-//        vector<ChunkDat> blocks;
-//        for(int j=0;j<chunk_blocks;j++){
-//            if(chunk_blocks[j]){
-//                blocks.push_back(this->read_block());
-//            }
-//        }
-//        updatefile(blocks,i,j,filepath);
-//    }
 }
 
 void session::file_created(string filepath){

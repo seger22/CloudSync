@@ -31,7 +31,8 @@ HEADERS += \
     DBmanager.h \
     ChunkHandler.h \
     Chunker.h \
-    chunkdat.h
+    chunkdat.h \
+    blockChecksumSerial.h
 
 win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../LibRabin/release/ -lLibRabin
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../LibRabin/debug/ -lLibRabin
@@ -76,3 +77,10 @@ else:unix: LIBS += -L$$OUT_PWD/../LibSha1/ -lLibSha1
 
 INCLUDEPATH += $$PWD/../LibSha1
 DEPENDPATH += $$PWD/../LibSha1
+
+win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../LibChecksum/release/ -lLibChecksum
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../LibChecksum/debug/ -lLibChecksum
+else:unix: LIBS += -L$$OUT_PWD/../LibChecksum/ -lLibChecksum
+
+INCLUDEPATH += $$PWD/../LibChecksum
+DEPENDPATH += $$PWD/../LibChecksum
