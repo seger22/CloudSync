@@ -1,6 +1,5 @@
 #include "chunkdat.h"
 
-ChunkDat::ChunkDat()
-{
+ChunkDat::ChunkDat(){
 
 }

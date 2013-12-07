@@ -2,15 +2,16 @@
 #define FILEHANDLER_H
 
 #include<stdio.h>
-#include<boost/asio.hpp>
 #include<boost/filesystem.hpp>
 #include<iostream>
 #include<fstream>
+#include "configurationmanager.h"
+#include "databasehandler.h"
 
 using namespace std;
 
 class filehandler
-{
+{    
 public:
     filehandler();
     std::ofstream get_output_stream(string path,string name);
@@ -21,6 +22,7 @@ public:
     void delete_file(string path, string file_name);
     void move_file(string old_path,string new_path, string file_name);
     void rename_directory(string path,string old_name, string new_name);
+    bool file_exists(string fullpath);
 
 private:
     string watch_dir;

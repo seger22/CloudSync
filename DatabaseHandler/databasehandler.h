@@ -2,7 +2,7 @@
 #define DBMANAGER_H
 
 #include <QObject>
-#include <QSqlDatabase>
+#include<QSqlDatabase>
 #include <QSqlError>
 #include <QFile>
 
@@ -20,13 +20,18 @@ class DatabaseManager : public QObject
         bool openDB();
         void closeDB();
         bool isOpen();
-        bool deleteDB();
         QSqlError lastError();
-        int insertChunk(u_int64_t hash, int offset, int length, QString path);
+        int insertChunk(u_int64_t hash, int offset, int length, int fileid);
         bool getChunk(u_int64_t hash, Chunk &chunk);
         int insertChecksum(QString checksum,QString path);
-        bool findChecksum(QString checksum, string &value);
-
+        bool findChecksum(QString checksum, string *value);
+        bool deleteChunkTableEntries();
+        bool deleteChecksumTableEntries();
+        bool deleteFileChunkEntries(QString path);
+        void moveFile(QString oldpath,QString newpath);
+        void moveDirectory(QString oldpath,QString newpath);
+        void deleteFile(QString path);
+        void deleteDirectory(QString path);
 
     private:
         QSqlDatabase db;

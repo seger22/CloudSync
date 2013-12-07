@@ -2,7 +2,9 @@
 #define SERVER_H
 
 #include<boost/asio.hpp>
+#include <QDir>
 #include<session.h>
+#include <stdlib.h> // to get path of home dir
 #include<boost/thread.hpp>
 
 using namespace std;

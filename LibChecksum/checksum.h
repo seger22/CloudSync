@@ -20,6 +20,8 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
+#include "librsync.h"
+
 rs_weak_sum_t rs_calc_weak_sum(void const *buf1, int len);
 
 void rs_calc_strong_sum(void const *buf, size_t buf_len, rs_strong_sum_t *);

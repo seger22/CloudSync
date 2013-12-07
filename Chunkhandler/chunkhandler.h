@@ -10,6 +10,10 @@
 #include <dirent.h>
 #include <sys/stat.h>
 #include<bitset>
+#include <queue>
+#include "blockchecksumserial.h"
+#include "deltahandler.h"
+#include "configurationmanager.h"
 
 #include <string>
 #include <sstream>
@@ -21,9 +25,17 @@
 
 #include "chunkdat.h"
 #include "Chunker.h"
-#include "DBmanager.h"
+#include "databasehandler.h"
+#include "blockdat.h"
+
+#include <assert.h>
+#include "hash_chain.h"
+#include "checksum.h"
+#include "rollsum.h"
+#include <queue>
 
 using namespace std;
+using namespace ulib;
 
 #define INT64(n) n##LL
 #define MSB64 INT64(0x8000000000000000)
@@ -44,6 +56,11 @@ void debug(const char* msg, ...);
 BOOL fileExists(const char* fname);
 //end utility functions
 
+struct BlockRowCol{
+    int row;
+    int col;
+};
+
 u_int64_t makeBitMask(int maskSize);
 class Checksum
 {
@@ -61,6 +78,27 @@ string getChecksum(){
     }
 string getPath(){
         return path;
+    }
+};
+
+class ChunkBlockOrderer
+{
+private:
+    int offset;
+    bool Ischunk;
+
+public:
+    ChunkBlockOrderer(int offset, bool ischunk){
+        this->offset=offset;
+        this->Ischunk=ischunk;
+    }
+
+    int getOffset(){
+        return offset;
+    }
+
+    int isChunk(){
+        return Ischunk;
     }
 };
 
@@ -179,7 +217,6 @@ public:
   }
 };
 
-
 void printChunkData(
     const char* msgPrefix,
     int size,
@@ -191,15 +228,31 @@ void printChunkContents(
     const unsigned char* buffer,
     int size);
 
-vector<Chunk*> processChunks(DataSource* ds,const char *path);
-vector<Chunk*> chunk_file(const char *path);
+//DeltaHandler* dlthandler;
 
-void
-chunk_directory(const char *dpath);
-void createFile(vector<u_int64_t> t, vector<ChunkDat> chunks, string filepath);
-vector<bool> findMatch(vector<u_int64_t> hashesFromClient);
+
+
+vector<Chunk> processChunks(DataSource* ds,const char *path);
+vector<Chunk> chunk_file(const char *path);
+void deleteChunks(vector<Chunk*> chunks);
+
+void chunk_directory(const char *dpath);
+void insert_file_chunk(const char *path);
+void createFile(vector<u_int64_t> t, vector<ChunkDat> chunks,string filepath);
+vector<bool> findChunkMatch(vector<u_int64_t> hashesFromClient, vector<Chunk> *chunks, bool *allmatched, int &matchcount);
 void DirectoryChecksum(const char *dpath);
-bool findFileChecksum(string checksum, string &value);
+bool findFileChecksum(string checksum, string value);
+vector<bool> findBlockMatch(vector<BlockChecksumSerial> block_checksums, string filepath, vector<int> *offsets);
+void createFileWithBlocks(vector<bool> matchdata, vector<int> offsets, vector<ChunkDat> blocks, string filepath, string filename);
+void writeBlocks(vector<ChunkDat> blocks, vector<int> matchedOffsets, vector<int> allNewOffsets, string filepath, string filename);
+void writeData(vector<Chunk> chunks, vector<ChunkDat> blocks, vector<int> matchedOffsets, vector<ChunkBlockOrderer> chunk_block_offsets,vector<int> lengths, string filename, string filepath);
+void updateFileEntries(string path);
+int getLastFileID(string path);
+string fileChecksum(const char *path);
 
+void writeChunks(vector<u_int64_t> hashesFromClient,queue<ChunkDat> *chunks, string filepath, string filename);
+vector<BlockDat> getUncompressedBlocks(vector<ChunkDat> mergedBlocks, vector<int> lengths, vector<int> matchedOffsets);
+void writeChunkFile(ChunkDat chunk, string filepath);
 
 #endif //CHUNKHANDLER_H
+

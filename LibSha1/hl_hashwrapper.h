@@ -75,11 +75,13 @@
 //----------------------------------------------------------------------	
 //STL includes
 #include <string>
+#include <string.h>
 
 //----------------------------------------------------------------------	
 //C includes
 //#include <stdio.h>
 #include <fstream>
+#include <errno.h>
 
 //----------------------------------------------------------------------	
 //hashlib++ includes
@@ -262,10 +264,9 @@ class hashwrapper
 			 */
 			if((file = fopen(filename.c_str(), "rb")) == NULL)
 			{
-				throw hlException(HL_FILE_READ_ERROR,
-						  "Cannot read file \"" + 
-						  filename + 
-						  "\".");
+                throw hlException(HL_FILE_READ_ERROR,"Cannot read file \"" +  filename +  "\". Error: "+strerror(errno));
+                //cout<<"Unable to read file "<<filename<<" now!!, Error: "<<strerror(errno);
+
 			}
 
 			/*

@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<window >ss</window>
+<dbuser ></dbuser>
+<dbpass ></dbpass>
+<usrdir>CloudSync</usrdir>
+<destusrdir ></destusrdir>
+ <?include somedata?>
